@@ -1,10 +1,5 @@
 {
-  "extends": [
-    "next",
-    "next/core-web-vitals",
-    "prettier",
-    "plugin:import/warnings"
-  ],
+  "extends": ["next", "next/core-web-vitals", "prettier", "plugin:import/warnings"],
   "rules": {
     "import/order": [
       "error",

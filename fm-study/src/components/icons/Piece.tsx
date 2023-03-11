@@ -6,9 +6,17 @@ interface PieceProps {
   fillColor?: string
   width?: number
   height?: number
+  flip: boolean
 }
 
-const Piece = ({ className, strokeColor, fillColor, width = 55, height = 55 }: PieceProps) => {
+const Piece = ({
+  className,
+  strokeColor,
+  fillColor,
+  width = 55,
+  height = 55,
+  flip,
+}: PieceProps) => {
   return (
     <motion.svg
       className={className}
@@ -25,9 +33,8 @@ const Piece = ({ className, strokeColor, fillColor, width = 55, height = 55 }: P
         fill={fillColor || 'white'}
         stroke={strokeColor || 'black'}
         strokeWidth='8'
-        // initial={{ pathLength: 0 }}
-        animate={{ rotateX: 180, rotate: 90 }}
-        transition={{ duration: 0.1 }}
+        animate={{ rotateX: flip ? 180 : 0, rotate: flip ? 90 : 0 }}
+        transition={{ duration: flip ? 0.1 : 0 }}
       />
     </motion.svg>
   )

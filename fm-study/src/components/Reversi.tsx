@@ -19,9 +19,9 @@ InitialBoardState[4][3] = 'Black'
 
 const Reversi = () => {
   const [turn, setTurn] = useState<'Black' | 'White' | 'BlackJudge' | 'WhiteJudge'>('Black')
-  const [boardState, setBoardState] = useState<Array<Array<'Black' | 'White' | 'None'>>>(
-    InitialBoardState.map((row) => [...row]),
-  )
+  const [boardState, setBoardState] = useState<
+    Array<Array<'Black' | 'White' | 'BlackJudge' | 'WhiteJudge' | 'None'>>
+  >(InitialBoardState.map((row) => [...row]))
   const [move, setMove] = useState<{ x: number; y: number; t: 'Black' | 'White' }>()
 
   const judgeBoard = useCallback(
@@ -30,12 +30,21 @@ const Reversi = () => {
       const col = boardState[x].slice()
       const colFirst = col.findIndex((it) => it === t)
       const colLast = R.lastIndexOf(t, col)
-      setBoardState((prev) => {
-        for (let i = 0; colFirst + i < colLast; i++) {
-          prev[x][colFirst + i] = t
-        }
-        return prev
-      })
+      colFirst >= 0 &&
+        setBoardState((prev) => {
+          prev = prev.map((x) =>
+            x.map((xy) => (xy === 'BlackJudge' ? 'Black' : xy === 'WhiteJudge' ? 'White' : xy)),
+          )
+          for (let i = 1; colFirst + i < colLast; i++) {
+            prev[x][colFirst + i] !== t &&
+              (prev[x][colFirst + i] = t === 'Black' ? 'BlackJudge' : 'WhiteJudge')
+          }
+          prev[x][y] = t
+          prev[x][colFirst] = t
+          prev[x][colLast] = t
+          console.log(prev)
+          return prev
+        })
       setTurn((prev) => (prev === 'BlackJudge' ? 'White' : 'Black'))
     },
     [boardState, turn],
@@ -70,22 +79,24 @@ const Reversi = () => {
                     setTurn((prev) => (prev === 'Black' ? 'BlackJudge' : 'WhiteJudge'))
                   }}
                 >
-                  {cols[n] === 'White' ? (
+                  {cols[n] === 'White' || cols[n] === 'WhiteJudge' ? (
                     <Piece
                       tw='m-auto'
                       width={25}
                       height={25}
                       fillColor={'white'}
                       strokeColor={'black'}
+                      flip={cols[n] === 'WhiteJudge'}
                     />
                   ) : (
-                    cols[n] === 'Black' && (
+                    (cols[n] === 'Black' || cols[n] === 'BlackJudge') && (
                       <Piece
                         tw='m-auto'
                         width={25}
                         height={25}
                         fillColor={'black'}
                         strokeColor={'white'}
+                        flip={cols[n] === 'BlackJudge'}
                       />
                     )
                   )}
